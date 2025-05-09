@@ -96,6 +96,20 @@ void ATopDownShooterPlayerController::ToggleShooting()
 	IsShooting = !IsShooting;
 }
 
+FVector ATopDownShooterPlayerController::CalculateMovementBlending()
+{
+	FVector movement = MovementRot.Vector();
+	FVector shooting = ShootRot.Vector();
+
+	float DotProd = FVector::DotProduct(movement, shooting);
+
+	FVector BlendVector = movement - shooting * DotProd;
+
+	FVector OutputVector = FVector(DotProd, BlendVector.Length(), 0);
+
+	return OutputVector * 100;
+}
+
 void ATopDownShooterPlayerController::Tick(float DeltaTime)
 {
 	FRotator currentOrientation;

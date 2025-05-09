@@ -54,9 +54,14 @@ protected:
 	class ABaseMagicCharacter* PlayerCharacter;
 
 	bool CanFire = true;
-	bool IsShooting = false;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool IsShooting;
 
 	void ToggleShooting();
+
+	UFUNCTION(BlueprintPure)
+	FVector CalculateMovementBlending();
 
 	FRotator ShootRot;
 	FRotator MovementRot;
