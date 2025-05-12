@@ -49,27 +49,11 @@ protected:
 
 	void FireBullet(const FInputActionValue& Value);
 
-	void SetCanFire(bool Value);
+	void ToggleShooting();
 
 	class ABaseMagicCharacter* PlayerCharacter;
 
-	bool CanFire = true;
-
-	UPROPERTY(BlueprintReadOnly)
-	bool IsShooting;
-
-	void ToggleShooting();
-
-	UFUNCTION(BlueprintPure)
-	FVector CalculateMovementBlending();
-
-	FRotator ShootRot;
-	FRotator MovementRot;
-
 	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditAnywhere)
-	float TimeBetweenFires = 0.2f;
 
 
 };

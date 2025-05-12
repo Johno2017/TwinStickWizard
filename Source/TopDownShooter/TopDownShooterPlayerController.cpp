@@ -58,55 +58,27 @@ void ATopDownShooterPlayerController::SetupInputComponent()
 	}
 }
 
+void ATopDownShooterPlayerController::ToggleShooting()
+{
+	PlayerCharacter->ToggleShooting();
+}
+
 void ATopDownShooterPlayerController::Move(const FInputActionValue &Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	FVector InputVector = FVector(MovementVector, 0);
-	MovementRot = InputVector.Rotation();
+	PlayerCharacter->SetMovementRotation(InputVector);
 
 	GetPawn()->AddMovementInput(InputVector, speed, false);
 }
 
 void ATopDownShooterPlayerController::FireBullet(const FInputActionValue& Value)
 {
-	
-}
-
-void ATopDownShooterPlayerController::SetCanFire(bool Value)
-{
-	CanFire = Value;
-}
-
-void ATopDownShooterPlayerController::ToggleShooting()
-{
-	IsShooting = !IsShooting;
-}
-
-FVector ATopDownShooterPlayerController::CalculateMovementBlending()
-{
-	FVector movement = MovementRot.Vector();
-	FVector shooting = ShootRot.Vector();
-
-	float DotProd = FVector::DotProduct(movement, shooting);
-
-	FVector BlendVector = movement - shooting * DotProd;
-
-	FVector OutputVector = FVector(DotProd, BlendVector.Length(), 0);
-
-	return OutputVector * 100;
+	FVector direction = FVector(Value.Get<FVector2D>(), 0);
+	PlayerCharacter->ShootBullet(direction);
 }
 
 void ATopDownShooterPlayerController::Tick(float DeltaTime)
 {
-	FRotator currentOrientation;
-	if (IsShooting) 
-	{
-		currentOrientation = ShootRot;
-	}
-	else 
-	{
-		currentOrientation = MovementRot;
-	}
 
-	PlayerCharacter->SetActorRotation(currentOrientation);
 }

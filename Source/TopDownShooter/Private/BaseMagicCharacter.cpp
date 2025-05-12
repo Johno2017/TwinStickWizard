@@ -55,23 +55,48 @@ float ABaseMagicCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
 	return DamageAmount;
 }
 
-AActor* ABaseMagicCharacter::ShootBullet()
+void ABaseMagicCharacter::SetCanFire(bool Value)
 {
-	if (PlayerCharacter)
-	{
-		FVector direction = FVector(Value.Get<FVector2D>(), 0);
-		ShootRot = direction.Rotation();
+	CanFire = Value;
+}
 
-		if (CanFire) {
-			PlayerCharacter->ShootBullet();
-			CanFire = false;
+void ABaseMagicCharacter::ToggleShooting()
+{
+	IsShooting = !IsShooting;
+}
 
-			FTimerDelegate Delegate = FTimerDelegate::CreateUObject(this, &ATopDownShooterPlayerController::SetCanFire, true);
-			FTimerHandle TimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, TimeBetweenFires, false);
-		}
+void ABaseMagicCharacter::SetMovementRotation(FVector RotValue)
+{
+	MovementRot = RotValue.Rotation();
+}
 
+FVector ABaseMagicCharacter::CalculateMovementBlending()
+{
+	FVector movement = MovementRot.Vector();
+	FVector shooting = ShootRot.Vector();
+
+	float DotProd = FVector::DotProduct(movement, shooting);
+
+	FVector BlendVector = movement - shooting * DotProd;
+
+	FVector OutputVector = FVector(DotProd, BlendVector.Length(), 0);
+
+	return OutputVector * 100;
+}
+
+AActor* ABaseMagicCharacter::ShootBullet(FVector Direction)
+{
+
+	ShootRot = Direction.Rotation();
+
+	if (CanFire) {
+		CanFire = false;
+
+		FTimerDelegate Delegate = FTimerDelegate::CreateUObject(this, &ABaseMagicCharacter::SetCanFire, true);
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, TimeBetweenFires, false);
 	}
+	SetActorRotation(Direction.Rotation());
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Instigator = this;
@@ -88,6 +113,18 @@ AActor* ABaseMagicCharacter::ShootBullet()
 void ABaseMagicCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	FRotator currentOrientation;
+	if (IsShooting)
+	{
+		currentOrientation = ShootRot;
+	}
+	else
+	{
+		currentOrientation = MovementRot;
+	}
+	
+	SetActorRotation(currentOrientation);
 
 }
 

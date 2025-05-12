@@ -20,7 +20,11 @@ public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
-	AActor* ShootBullet();
+	AActor* ShootBullet(FVector Direction);
+
+	void ToggleShooting();
+
+	void SetMovementRotation(FVector RotValue);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -49,6 +53,24 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float HP = 50;
 
+	bool CanFire = true;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool IsShooting;
+	
+	UPROPERTY(EditAnywhere)
+	float TimeBetweenFires = 0.2f;
+
+
+	UFUNCTION(BlueprintPure)
+	FVector CalculateMovementBlending();
+
+	void SetCanFire(bool Value);
+
+	FRotator ShootRot;
+
+	FRotator MovementRot;
+
 	virtual float TakeDamage
 	(
 		float DamageAmount,
@@ -56,7 +78,6 @@ protected:
 		class AController* EventInstigator,
 		AActor* DamageCauser
 	);
-
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ABaseBullet> BulletToSpawn;
