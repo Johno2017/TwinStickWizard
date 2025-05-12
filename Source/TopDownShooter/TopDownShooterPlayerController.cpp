@@ -69,21 +69,7 @@ void ATopDownShooterPlayerController::Move(const FInputActionValue &Value)
 
 void ATopDownShooterPlayerController::FireBullet(const FInputActionValue& Value)
 {
-	if (PlayerCharacter) 
-	{
-		FVector direction = FVector(Value.Get<FVector2D>(), 0);
-		ShootRot = direction.Rotation();
-
-		if (CanFire) {
-			PlayerCharacter->ShootBullet();
-			CanFire = false;
-
-			FTimerDelegate Delegate = FTimerDelegate::CreateUObject(this, &ATopDownShooterPlayerController::SetCanFire, true);
-			FTimerHandle TimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, TimeBetweenFires, false);
-		}
-		
-	}
+	
 }
 
 void ATopDownShooterPlayerController::SetCanFire(bool Value)

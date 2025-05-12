@@ -57,6 +57,22 @@ float ABaseMagicCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
 
 AActor* ABaseMagicCharacter::ShootBullet()
 {
+	if (PlayerCharacter)
+	{
+		FVector direction = FVector(Value.Get<FVector2D>(), 0);
+		ShootRot = direction.Rotation();
+
+		if (CanFire) {
+			PlayerCharacter->ShootBullet();
+			CanFire = false;
+
+			FTimerDelegate Delegate = FTimerDelegate::CreateUObject(this, &ATopDownShooterPlayerController::SetCanFire, true);
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, TimeBetweenFires, false);
+		}
+
+	}
+
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Instigator = this;
 	AActor* SpawnedActor = GetWorld()->SpawnActor<ABaseBullet>(
