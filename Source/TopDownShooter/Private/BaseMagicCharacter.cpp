@@ -95,18 +95,19 @@ AActor* ABaseMagicCharacter::ShootBullet(FVector Direction)
 		FTimerDelegate Delegate = FTimerDelegate::CreateUObject(this, &ABaseMagicCharacter::SetCanFire, true);
 		FTimerHandle TimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, TimeBetweenFires, false);
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Instigator = this;
+		AActor* SpawnedActor = GetWorld()->SpawnActor<ABaseBullet>(
+			BulletToSpawn,
+			SpawnLocation->GetComponentLocation(),
+			GetActorRotation(),
+			SpawnParams);
+		return SpawnedActor;
 	}
 	SetActorRotation(Direction.Rotation());
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Instigator = this;
-	AActor* SpawnedActor = GetWorld()->SpawnActor<ABaseBullet>(
-		BulletToSpawn,
-		SpawnLocation->GetComponentLocation(),
-		GetActorRotation(),
-		SpawnParams);
-
-	return SpawnedActor;
+	return nullptr;
 }
 
 // Called every frame

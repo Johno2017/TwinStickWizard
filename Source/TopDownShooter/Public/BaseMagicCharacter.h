@@ -22,6 +22,10 @@ public:
 
 	AActor* ShootBullet(FVector Direction);
 
+	FRotator ShootRot;
+
+	FRotator MovementRot;
+
 	void ToggleShooting();
 
 	void SetMovementRotation(FVector RotValue);
@@ -66,10 +70,6 @@ protected:
 	FVector CalculateMovementBlending();
 
 	void SetCanFire(bool Value);
-
-	FRotator ShootRot;
-
-	FRotator MovementRot;
 
 	virtual float TakeDamage
 	(

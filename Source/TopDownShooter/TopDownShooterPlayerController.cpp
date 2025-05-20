@@ -60,14 +60,21 @@ void ATopDownShooterPlayerController::SetupInputComponent()
 
 void ATopDownShooterPlayerController::ToggleShooting()
 {
-	PlayerCharacter->ToggleShooting();
+	ABaseMagicCharacter* character = Cast<ABaseMagicCharacter>(GetPawn());
+	if (character) {
+		character->ToggleShooting();
+	}
 }
 
 void ATopDownShooterPlayerController::Move(const FInputActionValue &Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	FVector InputVector = FVector(MovementVector, 0);
-	PlayerCharacter->SetMovementRotation(InputVector);
+
+	ABaseMagicCharacter* character = Cast<ABaseMagicCharacter>(GetPawn());
+	if (character) {
+		character->MovementRot = InputVector.Rotation();
+	} 
 
 	GetPawn()->AddMovementInput(InputVector, speed, false);
 }
