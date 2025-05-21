@@ -13,5 +13,8 @@ UCLASS()
 class TOPDOWNSHOOTER_API ABaseEnemyCharacter : public ABaseMagicCharacter
 {
 	GENERATED_BODY()
+
+public:
+	class UBehaviorTree* BTAsset;
 	
 };
