@@ -63,6 +63,8 @@ void ATopDownShooterPlayerController::ToggleShooting()
 	ABaseMagicCharacter* character = Cast<ABaseMagicCharacter>(GetPawn());
 	if (character) {
 		character->ToggleShooting();
+	} else {
+		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to retrieve character pawn."), *GetNameSafe(this));
 	}
 }
 
@@ -74,9 +76,10 @@ void ATopDownShooterPlayerController::Move(const FInputActionValue &Value)
 	ABaseMagicCharacter* character = Cast<ABaseMagicCharacter>(GetPawn());
 	if (character) {
 		character->MovementRot = InputVector.Rotation();
-	} 
-
-	GetPawn()->AddMovementInput(InputVector, speed, false);
+		character->AddMovementInput(InputVector, speed, false);
+	} else {
+		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to retrieve character pawn."), *GetNameSafe(this));
+	}
 }
 
 void ATopDownShooterPlayerController::FireBullet(const FInputActionValue& Value)
@@ -84,6 +87,8 @@ void ATopDownShooterPlayerController::FireBullet(const FInputActionValue& Value)
 	FVector direction = FVector(Value.Get<FVector2D>(), 0);
 	if (PlayerCharacter) {
 		PlayerCharacter->ShootBullet(direction);
+	} else {
+		UE_LOG(LogTemplateCharacter, Error, TEXT(" PlayerCharacter member returned null"));
 	}
 }
 

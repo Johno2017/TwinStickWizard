@@ -15,24 +15,15 @@ public:
 	// Sets default values for this character's properties
 	ABaseMagicCharacter();
 
-	/** Returns TopDownCameraComponent subobject **/
-	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-
-	AActor* ShootBullet(FVector Direction);
-
-	FRotator ShootRot;
-
-	FRotator MovementRot;
+	//Set Defaults for rotators
+	FRotator ShootRot = FRotator::ZeroRotator;
+	FRotator MovementRot = FRotator::ZeroRotator;
 
 	void ToggleShooting();
-
 	void SetMovementRotation(FVector RotValue);
-
+	AActor* ShootBullet(FVector Direction);
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -41,30 +32,24 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
-	UChildActorComponent* Weapon;
-
-	/** Top down camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* TopDownCameraComponent;
-
-	/** Camera boom positioning the camera above the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
-
-	UPROPERTY(EditDefaultsOnly)
-	USceneComponent* SpawnLocation;
-
-	UPROPERTY(EditAnywhere)
 	float HP = 50;
 
-	bool uCanFire = true;
-
 	UPROPERTY(BlueprintReadOnly)
-	bool IsShooting;
-	
+	bool uIsShooting = false;
+
 	UPROPERTY(EditAnywhere)
 	float TimeBetweenFires = 0.2f;
 
+	bool uCanFire = true;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ABaseBullet> BulletToSpawn;
+
+	UPROPERTY(EditAnywhere)
+	UChildActorComponent* Weapon;
+
+	UPROPERTY(EditDefaultsOnly)
+	USceneComponent* SpawnLocation;
 
 	UFUNCTION(BlueprintPure)
 	FVector CalculateMovementBlending();
@@ -78,10 +63,5 @@ protected:
 		class AController* EventInstigator,
 		AActor* DamageCauser
 	);
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class ABaseBullet> BulletToSpawn;
-
-
 
 };
