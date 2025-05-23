@@ -57,7 +57,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float HP = 50;
 
-	bool CanFire = true;
+	bool uCanFire = true;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool IsShooting;

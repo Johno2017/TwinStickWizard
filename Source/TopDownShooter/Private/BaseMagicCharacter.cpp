@@ -16,7 +16,6 @@ ABaseMagicCharacter::ABaseMagicCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-
 	// Create a camera boom...
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -57,7 +56,7 @@ float ABaseMagicCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
 
 void ABaseMagicCharacter::SetCanFire(bool Value)
 {
-	CanFire = Value;
+	uCanFire = Value;
 }
 
 void ABaseMagicCharacter::ToggleShooting()
@@ -88,9 +87,10 @@ AActor* ABaseMagicCharacter::ShootBullet(FVector Direction)
 {
 
 	ShootRot = Direction.Rotation();
+	AActor* Bullet = nullptr;
 
-	if (CanFire) {
-		CanFire = false;
+	if (uCanFire) {
+		uCanFire = false;
 
 		FTimerDelegate Delegate = FTimerDelegate::CreateUObject(this, &ABaseMagicCharacter::SetCanFire, true);
 		FTimerHandle TimerHandle;
@@ -103,11 +103,11 @@ AActor* ABaseMagicCharacter::ShootBullet(FVector Direction)
 			SpawnLocation->GetComponentLocation(),
 			GetActorRotation(),
 			SpawnParams);
-		return SpawnedActor;
+		Bullet = SpawnedActor;
 	}
 	SetActorRotation(Direction.Rotation());
 
-	return nullptr;
+	return Bullet;
 }
 
 // Called every frame

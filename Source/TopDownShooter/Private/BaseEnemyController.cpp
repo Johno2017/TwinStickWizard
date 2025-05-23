@@ -12,6 +12,6 @@ void ABaseEnemyController::BeginPlay()
 	ABaseEnemyCharacter* Enemy = Cast<ABaseEnemyCharacter>(GetPawn());
 	if (Enemy && Enemy->BTAsset) {
 		RunBehaviorTree(Enemy->BTAsset);
-		GetBlackboardComponent()->SetValueAsObject("Playuer", UGameplayStatics::GetPlayerCharacter(this,0));
+		GetBlackboardComponent()->SetValueAsObject("Player", UGameplayStatics::GetPlayerCharacter(this,0));
 	}
 }

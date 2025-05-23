@@ -82,7 +82,9 @@ void ATopDownShooterPlayerController::Move(const FInputActionValue &Value)
 void ATopDownShooterPlayerController::FireBullet(const FInputActionValue& Value)
 {
 	FVector direction = FVector(Value.Get<FVector2D>(), 0);
-	PlayerCharacter->ShootBullet(direction);
+	if (PlayerCharacter) {
+		PlayerCharacter->ShootBullet(direction);
+	}
 }
 
 void ATopDownShooterPlayerController::Tick(float DeltaTime)
