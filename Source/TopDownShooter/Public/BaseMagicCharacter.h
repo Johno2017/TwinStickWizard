@@ -21,7 +21,7 @@ public:
 
 	void ToggleShooting();
 	void SetMovementRotation(FVector RotValue);
-	AActor* ShootBullet(FVector Direction);
+	void Fire(FVector Direction);
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	// Called to bind functionality to input
@@ -42,14 +42,14 @@ protected:
 
 	bool uCanFire = true;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class ABaseBullet> BulletToSpawn;
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	TSubclassOf<class ABaseBullet> ProjectileClass;
 
 	UPROPERTY(EditAnywhere)
 	UChildActorComponent* Weapon;
 
 	UPROPERTY(EditDefaultsOnly)
-	USceneComponent* SpawnLocation;
+	USceneComponent* BulletSpawnLocation;
 
 	UFUNCTION(BlueprintPure)
 	FVector CalculateMovementBlending();

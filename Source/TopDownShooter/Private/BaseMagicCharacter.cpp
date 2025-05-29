@@ -8,15 +8,18 @@
 // Sets default values
 ABaseMagicCharacter::ABaseMagicCharacter()
 {
-	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
-	Weapon->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
-
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
-	SpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Bullet Spawn Point"));
-	SpawnLocation->SetupAttachment(GetMesh());
 
+	if (!Weapon) {
+		Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
+		Weapon->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
+	}
+
+	if (!BulletSpawnLocation) {
+		BulletSpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Bullet Spawn Point"));
+		BulletSpawnLocation->SetupAttachment(GetMesh());
+	}
 }
 
 // Called when the game starts or when spawned
@@ -71,32 +74,37 @@ FVector ABaseMagicCharacter::CalculateMovementBlending()
 	return OutputVector * 100;
 }
 
-AActor* ABaseMagicCharacter::ShootBullet(FVector Direction)
+void ABaseMagicCharacter::Fire(FVector Direction)
 {
-
 	ShootRot = Direction.Rotation();
-	AActor* Bullet = nullptr;
+	SetActorRotation(ShootRot);
 
 	if (uCanFire) {
+
 		uCanFire = false;
 
-		FTimerDelegate Delegate = FTimerDelegate::CreateUObject(this, &ABaseMagicCharacter::SetCanFire, true);
-		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, TimeBetweenFires, false);
+		UWorld* World = GetWorld();
+		
+		if (World)
+		{
+			FTimerDelegate Delegate = FTimerDelegate::CreateUObject(this, &ABaseMagicCharacter::SetCanFire, true);
+			FTimerHandle TimerHandle;
+			World->GetTimerManager().SetTimer(TimerHandle, Delegate, TimeBetweenFires, false);
 
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Instigator = this;
-		AActor* SpawnedActor = GetWorld()->SpawnActor<ABaseBullet>(
-			BulletToSpawn,
-			SpawnLocation->GetComponentLocation(),
-			GetActorRotation(),
-			SpawnParams);
-		Bullet = SpawnedActor;
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = GetInstigator();
+
+			// Spawn the projectile at the muzzle.
+			ABaseBullet* Projectile = World->SpawnActor<ABaseBullet>(ProjectileClass, BulletSpawnLocation->GetComponentLocation(), GetActorRotation(), SpawnParams);
+			if (Projectile)
+			{
+				// Set the projectile's initial trajectory.
+				FVector LaunchDirection = Direction;
+				Projectile->FireInDirection(LaunchDirection);
+			}
+		}	
 	}
-
-	SetActorRotation(Direction.Rotation());
-
-	return Bullet;
 }
 
 // Called every frame
@@ -104,7 +112,8 @@ void ABaseMagicCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FRotator currentOrientation;
+	FRotator currentOrientation = FRotator::ZeroRotator;
+
 	if (uIsShooting)
 	{
 		currentOrientation = ShootRot;
