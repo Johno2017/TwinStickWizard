@@ -2,37 +2,24 @@
 
 
 #include "BaseMagicCharacter.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
 #include "BaseWeapon.h"
 #include "BaseBullet.h"
 
 // Sets default values
 ABaseMagicCharacter::ABaseMagicCharacter()
 {
-	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
-	Weapon->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
-
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	if (!Weapon) {
+		Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
+		Weapon->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
+	}
 
-	// Create a camera boom...
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when character does
-	CameraBoom->TargetArmLength = 800.f;
-	CameraBoom->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
-	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
-
-	// Create a camera...
-	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
-	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm]
-	
-	SpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Bullet Spawn Point"));
-	SpawnLocation->SetupAttachment(GetMesh());
-
+	if (!BulletSpawnLocation) {
+		BulletSpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Bullet Spawn Point"));
+		BulletSpawnLocation->SetupAttachment(GetMesh());
+	}
 }
 
 // Called when the game starts or when spawned
@@ -43,6 +30,9 @@ void ABaseMagicCharacter::BeginPlay()
 	ABaseWeapon* WeaponPtr = Cast<ABaseWeapon>(Weapon->GetChildActor());
 	if (WeaponPtr) {
 		WeaponPtr->SetPlayerPointer(this);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Weapon not found."));
 	}
 }
 
@@ -57,12 +47,12 @@ float ABaseMagicCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
 
 void ABaseMagicCharacter::SetCanFire(bool Value)
 {
-	CanFire = Value;
+	uCanFire = Value;
 }
 
 void ABaseMagicCharacter::ToggleShooting()
 {
-	IsShooting = !IsShooting;
+	uIsShooting = !uIsShooting;
 }
 
 void ABaseMagicCharacter::SetMovementRotation(FVector RotValue)
@@ -84,30 +74,37 @@ FVector ABaseMagicCharacter::CalculateMovementBlending()
 	return OutputVector * 100;
 }
 
-AActor* ABaseMagicCharacter::ShootBullet(FVector Direction)
+void ABaseMagicCharacter::Fire(FVector Direction)
 {
-
 	ShootRot = Direction.Rotation();
+	SetActorRotation(ShootRot);
 
-	if (CanFire) {
-		CanFire = false;
+	if (uCanFire) {
 
-		FTimerDelegate Delegate = FTimerDelegate::CreateUObject(this, &ABaseMagicCharacter::SetCanFire, true);
-		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, TimeBetweenFires, false);
+		uCanFire = false;
 
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Instigator = this;
-		AActor* SpawnedActor = GetWorld()->SpawnActor<ABaseBullet>(
-			BulletToSpawn,
-			SpawnLocation->GetComponentLocation(),
-			GetActorRotation(),
-			SpawnParams);
-		return SpawnedActor;
+		UWorld* World = GetWorld();
+		
+		if (World)
+		{
+			FTimerDelegate Delegate = FTimerDelegate::CreateUObject(this, &ABaseMagicCharacter::SetCanFire, true);
+			FTimerHandle TimerHandle;
+			World->GetTimerManager().SetTimer(TimerHandle, Delegate, TimeBetweenFires, false);
+
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = GetInstigator();
+
+			// Spawn the projectile at the muzzle.
+			ABaseBullet* Projectile = World->SpawnActor<ABaseBullet>(ProjectileClass, BulletSpawnLocation->GetComponentLocation(), GetActorRotation(), SpawnParams);
+			if (Projectile)
+			{
+				// Set the projectile's initial trajectory.
+				FVector LaunchDirection = Direction;
+				Projectile->FireInDirection(LaunchDirection);
+			}
+		}	
 	}
-	SetActorRotation(Direction.Rotation());
-
-	return nullptr;
 }
 
 // Called every frame
@@ -115,8 +112,9 @@ void ABaseMagicCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FRotator currentOrientation;
-	if (IsShooting)
+	FRotator currentOrientation = FRotator::ZeroRotator;
+
+	if (uIsShooting)
 	{
 		currentOrientation = ShootRot;
 	}
