@@ -56,14 +56,19 @@ ABaseBullet::ABaseBullet()
             ProjectileMeshComponent->SetStaticMesh(Mesh.Object);
         }
 
-        static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("/Script/Engine.Material'/Game/StarterContent/Materials/M_AssetPlatform.M_AssetPlatform'"));
+        static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("/Script/Engine.Material'/Game/TopDown/BasicBullet.BasicBullet'"));
         if (Material.Succeeded())
         {
             ProjectileMaterialInstance = UMaterialInstanceDynamic::Create(Material.Object, ProjectileMeshComponent);
         }
         ProjectileMeshComponent->SetMaterial(0, ProjectileMaterialInstance);
-        ProjectileMeshComponent->SetRelativeScale3D(FVector(0.09f, 0.09f, 0.09f));
+        //ProjectileMeshComponent->SetRelativeScale3D(FVector(0.09f, 0.09f, 0.09f));
         ProjectileMeshComponent->SetupAttachment(RootComponent);
+    }
+
+    if (!BulletFX) {
+        BulletFX = CreateDefaultSubobject<UNiagaraComponent>("BulletFX");
+        BulletFX->SetupAttachment(RootComponent);
     }
 
     InitialLifeSpan = 3.0f;
