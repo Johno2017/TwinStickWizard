@@ -62,6 +62,5 @@ protected:
 		struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator,
 		AActor* DamageCauser
-	);
-
+	) override;
 };

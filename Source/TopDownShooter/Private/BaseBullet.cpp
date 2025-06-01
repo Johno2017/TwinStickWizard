@@ -56,19 +56,17 @@ ABaseBullet::ABaseBullet()
             ProjectileMeshComponent->SetStaticMesh(Mesh.Object);
         }
 
-        static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("/Script/Engine.Material'/Game/TopDown/BasicBullet.BasicBullet'"));
+        static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("/Script/Engine.Material'/Game/TopDown/Materials/BasicBullet.BasicBullet'"));
         if (Material.Succeeded())
         {
             ProjectileMaterialInstance = UMaterialInstanceDynamic::Create(Material.Object, ProjectileMeshComponent);
         }
+        else {
+            UE_LOG(LogTemp, Error, TEXT("Material failed"));
+        }
         ProjectileMeshComponent->SetMaterial(0, ProjectileMaterialInstance);
-        //ProjectileMeshComponent->SetRelativeScale3D(FVector(0.09f, 0.09f, 0.09f));
+        ProjectileMeshComponent->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
         ProjectileMeshComponent->SetupAttachment(RootComponent);
-    }
-
-    if (!BulletFX) {
-        BulletFX = CreateDefaultSubobject<UNiagaraComponent>("BulletFX");
-        BulletFX->SetupAttachment(RootComponent);
     }
 
     InitialLifeSpan = 3.0f;
@@ -106,10 +104,8 @@ void ABaseBullet::FireInDirection(const FVector& ShootDirection)
 
 void ABaseBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-    if (OtherActor != this && OtherComponent->IsSimulatingPhysics())
-    {
-        OtherComponent->AddImpulseAtLocation(ProjectileMovementComponent->Velocity * 100.0f, Hit.ImpactPoint);
-    }
+    AController* PlayerC = GetInstigator()->GetController();
+    UGameplayStatics::ApplyDamage(OtherActor, 10.f, PlayerC, this, DamageType);
     Destroy();
 }
 
