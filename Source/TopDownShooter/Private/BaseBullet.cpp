@@ -104,6 +104,7 @@ void ABaseBullet::FireInDirection(const FVector& ShootDirection)
 
 void ABaseBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
+    UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactParticles, GetActorLocation());
     AController* PlayerC = GetInstigator()->GetController();
     UGameplayStatics::ApplyDamage(OtherActor, 10.f, PlayerC, this, DamageType);
     Destroy();
