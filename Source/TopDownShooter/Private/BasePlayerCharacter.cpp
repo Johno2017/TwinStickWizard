@@ -4,6 +4,7 @@
 #include "BasePlayerCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "HealthComponent.h"
 
 ABasePlayerCharacter::ABasePlayerCharacter() {
 
@@ -19,5 +20,10 @@ ABasePlayerCharacter::ABasePlayerCharacter() {
 	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm]
+
+	if (HealthComponent) {
+		HealthComponent->SetHealth(HP);
+		HealthComponent->SetMaxHealth(HP);
+	}
 
 }

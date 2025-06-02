@@ -2,4 +2,11 @@
 
 
 #include "BaseEnemyCharacter.h"
+#include "HealthComponent.h"
 
+ABaseEnemyCharacter::ABaseEnemyCharacter() {
+	if (HealthComponent) {
+		HealthComponent->SetHealth(HP);
+		HealthComponent->SetMaxHealth(HP);
+	}
+}

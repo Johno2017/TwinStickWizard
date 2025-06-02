@@ -51,8 +51,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	USceneComponent* BulletSpawnLocation;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Default, meta = (AllowPrivateAccess = "true"))
+	class UHealthComponent* HealthComponent;
+
 	UFUNCTION(BlueprintPure)
 	FVector CalculateMovementBlending();
+
+	UFUNCTION()
+	void HealthDepleted();
 
 	void SetCanFire(bool Value);
 
