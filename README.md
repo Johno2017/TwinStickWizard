@@ -3,4 +3,5 @@ Work in progress. The goal of this project is to create a top down 2D shooter us
 Players will move from room to room defeating wizards using different types of spells to defeat different types of enemies. Clearing all rooms will result in a mission complete.
 
 # Current Progress on Gameplay
-![image](https://github.com/user-attachments/assets/25d73e9f-9d3a-47dd-be34-6a352418fbe3)
+![image](https://github.com/user-attachments/assets/e8ca4e57-38a0-40e7-a909-6d94472a07fd)
+
