@@ -32,7 +32,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
-	float HP = 50;
+	float HP = 100.0f;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool uIsShooting = false;
@@ -51,8 +51,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	USceneComponent* BulletSpawnLocation;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Default, meta = (AllowPrivateAccess = "true"))
+	class UHealthComponent* HealthComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetReference;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UHealthBarWidget* HealthBarWidget;
+
 	UFUNCTION(BlueprintPure)
 	FVector CalculateMovementBlending();
+
+	UFUNCTION()
+	void HealthDepleted();
 
 	void SetCanFire(bool Value);
 

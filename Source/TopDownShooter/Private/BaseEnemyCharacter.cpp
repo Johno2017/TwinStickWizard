@@ -2,4 +2,19 @@
 
 
 #include "BaseEnemyCharacter.h"
+#include "HealthComponent.h"
 
+ABaseEnemyCharacter::ABaseEnemyCharacter() {
+	if (HealthComponent) {
+		HealthComponent->SetHealth(HP);
+		HealthComponent->SetMaxHealth(HP);
+	}
+}
+
+void ABaseEnemyCharacter::BeginPlay() 
+{
+	Super::BeginPlay();
+
+	Fire(FVector(0, 0, 0));
+
+}

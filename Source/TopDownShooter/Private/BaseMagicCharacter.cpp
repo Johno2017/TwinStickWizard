@@ -3,7 +3,10 @@
 
 #include "BaseMagicCharacter.h"
 #include "BaseWeapon.h"
+#include "HealthComponent.h"
 #include "BaseBullet.h"
+#include "HealthBarWidget.h"
+#include "Blueprint/WidgetTree.h"
 
 // Sets default values
 ABaseMagicCharacter::ABaseMagicCharacter()
@@ -20,6 +23,10 @@ ABaseMagicCharacter::ABaseMagicCharacter()
 		BulletSpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Bullet Spawn Point"));
 		BulletSpawnLocation->SetupAttachment(GetMesh());
 	}
+
+	if (!HealthComponent) {
+		HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	}
 }
 
 // Called when the game starts or when spawned
@@ -34,14 +41,19 @@ void ABaseMagicCharacter::BeginPlay()
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("Weapon not found."));
 	}
+
+	HealthComponent->OnHealthDepleted.AddDynamic(this, &ABaseMagicCharacter::HealthDepleted);
 }
 
 float ABaseMagicCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	HP -= DamageAmount;
-	if (HP <= 0) {
-		Destroy();
+	if (HealthComponent) {
+		HealthComponent->UpdateHealth(-DamageAmount);
 	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("HealthComponent null"));
+	}
+	
 	return DamageAmount;
 }
 
@@ -72,6 +84,11 @@ FVector ABaseMagicCharacter::CalculateMovementBlending()
 	FVector OutputVector = FVector(DotProd, BlendVector.Length(), 0);
 
 	return OutputVector * 100;
+}
+
+void ABaseMagicCharacter::HealthDepleted()
+{
+	Destroy();
 }
 
 void ABaseMagicCharacter::Fire(FVector Direction)

@@ -15,6 +15,10 @@ class TOPDOWNSHOOTER_API ABaseEnemyCharacter : public ABaseMagicCharacter
 	GENERATED_BODY()
 
 public:
+	// Sets default values for this character's properties
+	ABaseEnemyCharacter();
+
+	virtual void BeginPlay() override;
 	class UBehaviorTree* BTAsset;
 	
 };

@@ -27,7 +27,7 @@ protected:
 	class UNiagaraSystem* ImpactParticles;
 
 	UPROPERTY(EditDefaultsOnly)
-	float BaseDamage = 30;
+	float BaseDamage = 30.0f;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageType> DamageType;
