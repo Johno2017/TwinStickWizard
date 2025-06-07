@@ -32,7 +32,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
-	float HP = 50;
+	float HP = 100.0f;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool uIsShooting = false;

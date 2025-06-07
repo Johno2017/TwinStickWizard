@@ -106,7 +106,7 @@ void ABaseBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 {
     UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactParticles, GetActorLocation());
     AController* PlayerC = nullptr;
-    UGameplayStatics::ApplyDamage(OtherActor, 10.f, PlayerC, this, DamageType);
+    UGameplayStatics::ApplyDamage(OtherActor, BaseDamage, PlayerC, this, DamageType);
     Destroy();
 
 }
