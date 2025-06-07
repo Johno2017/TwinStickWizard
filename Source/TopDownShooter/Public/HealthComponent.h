@@ -7,6 +7,7 @@
 #include "HealthComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHealthDepletedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedSignature, float, NewHealth, float, MaxHealth);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TOPDOWNSHOOTER_API UHealthComponent : public UActorComponent
@@ -24,6 +25,10 @@ class TOPDOWNSHOOTER_API UHealthComponent : public UActorComponent
 public:
 	UHealthComponent();
 
+	UPROPERTY(BlueprintAssignable, Category = "Default")
+	FOnHealthChangedSignature OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Default")
 	FOnHealthDepletedSignature OnHealthDepleted;
 
 protected:

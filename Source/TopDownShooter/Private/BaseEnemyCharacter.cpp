@@ -10,3 +10,11 @@ ABaseEnemyCharacter::ABaseEnemyCharacter() {
 		HealthComponent->SetMaxHealth(HP);
 	}
 }
+
+void ABaseEnemyCharacter::BeginPlay() 
+{
+	Super::BeginPlay();
+
+	Fire(FVector(0, 0, 0));
+
+}

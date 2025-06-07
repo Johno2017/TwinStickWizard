@@ -25,5 +25,10 @@ ABasePlayerCharacter::ABasePlayerCharacter() {
 		HealthComponent->SetHealth(HP);
 		HealthComponent->SetMaxHealth(HP);
 	}
+}
+
+void ABasePlayerCharacter::BeginPlay() {
+	Super::BeginPlay();
+
 
 }

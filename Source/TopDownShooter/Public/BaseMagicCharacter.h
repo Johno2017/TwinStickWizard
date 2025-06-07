@@ -54,6 +54,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Default, meta = (AllowPrivateAccess = "true"))
 	class UHealthComponent* HealthComponent;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetReference;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UHealthBarWidget* HealthBarWidget;
+
 	UFUNCTION(BlueprintPure)
 	FVector CalculateMovementBlending();
 

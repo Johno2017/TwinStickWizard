@@ -5,6 +5,8 @@
 #include "BaseWeapon.h"
 #include "HealthComponent.h"
 #include "BaseBullet.h"
+#include "HealthBarWidget.h"
+#include "Blueprint/WidgetTree.h"
 
 // Sets default values
 ABaseMagicCharacter::ABaseMagicCharacter()
