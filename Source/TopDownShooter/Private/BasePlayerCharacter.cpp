@@ -29,6 +29,31 @@ ABasePlayerCharacter::ABasePlayerCharacter() {
 
 void ABasePlayerCharacter::BeginPlay() {
 	Super::BeginPlay();
+}
 
+// Called to bind functionality to input
+void ABasePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+}
+
+// Called every frame
+void ABasePlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	FRotator currentOrientation = FRotator::ZeroRotator;
+
+	if (uIsShooting)
+	{
+		currentOrientation = ShootRot;
+	}
+	else
+	{
+		currentOrientation = MovementRot;
+	}
+
+	SetActorRotation(currentOrientation);
 
 }

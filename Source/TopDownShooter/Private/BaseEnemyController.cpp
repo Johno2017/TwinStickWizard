@@ -9,6 +9,8 @@
 
 void ABaseEnemyController::BeginPlay()
 {
+	Super::BeginPlay();
+
 	ABaseEnemyCharacter* Enemy = Cast<ABaseEnemyCharacter>(GetPawn());
 	if (Enemy && Enemy->BTAsset) {
 		RunBehaviorTree(Enemy->BTAsset);

@@ -42,7 +42,7 @@ ABaseBullet::ABaseBullet()
         ProjectileMovementComponent->InitialSpeed = 3000.0f;
         ProjectileMovementComponent->MaxSpeed = 3000.0f;
         ProjectileMovementComponent->bRotationFollowsVelocity = true;
-        ProjectileMovementComponent->bShouldBounce = true;
+        ProjectileMovementComponent->bShouldBounce = false;
         ProjectileMovementComponent->Bounciness = 1.0f;
         ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
     }
@@ -107,7 +107,7 @@ void ABaseBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
     UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactParticles, GetActorLocation());
     AController* PlayerC = nullptr;
     UGameplayStatics::ApplyDamage(OtherActor, BaseDamage, PlayerC, this, DamageType);
-    //Destroy();
+    Destroy();
 
 }
 

@@ -17,6 +17,8 @@ class TOPDOWNSHOOTER_API ABasePlayerCharacter : public ABaseMagicCharacter
 public:
 	ABasePlayerCharacter();
 
+	virtual void Tick(float DeltaTime);
+
 	virtual void BeginPlay() override;
 
 	/** Returns TopDownCameraComponent subobject **/
@@ -31,5 +33,9 @@ public:
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
+
+	// Called to bind functionality to input
+	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
+
 	
 };

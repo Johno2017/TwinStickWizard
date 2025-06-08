@@ -124,30 +124,4 @@ void ABaseMagicCharacter::Fire(FVector Direction)
 	}
 }
 
-// Called every frame
-void ABaseMagicCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	FRotator currentOrientation = FRotator::ZeroRotator;
-
-	if (uIsShooting)
-	{
-		currentOrientation = ShootRot;
-	}
-	else
-	{
-		currentOrientation = MovementRot;
-	}
-	
-	SetActorRotation(currentOrientation);
-
-}
-
-// Called to bind functionality to input
-void ABaseMagicCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
 

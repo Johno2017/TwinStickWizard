@@ -19,6 +19,8 @@ public:
 	ABaseEnemyCharacter();
 
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly)
 	class UBehaviorTree* BTAsset;
 	
 };
